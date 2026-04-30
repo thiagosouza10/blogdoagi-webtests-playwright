@@ -14,8 +14,11 @@
   "author": "Thiago de Souza",
   "type": "commonjs",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "allure:generate": "allure generate ./allure-results -o ./allure-report --clean && npx allure open ./allure-report"
+  },
   "devDependencies": {
-    "@playwright/test": "^1.59.1"
+    "@playwright/test": "^1.59.1",
+    "allure-playwright": "^3.7.1"
   }
 }
