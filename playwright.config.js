@@ -14,7 +14,7 @@ export default defineConfig({
     baseURL: 'https://blog.agibank.com.br',
     headless: true,
     screenshot: 'only-on-failure',
-    video: 'off',
+    video: 'on',
   },
 
   projects: [
