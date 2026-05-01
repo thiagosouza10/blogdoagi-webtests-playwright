@@ -7,8 +7,7 @@ export default defineConfig({
 
   reporter: [
     ['line'],
-    ['html'],
-    ['allure-playwright', { outputFolder: 'allure-results' }],
+    ['html', { open: 'never' }]
   ],
 
   use: {

@@ -2,26 +2,24 @@
   "name": "blogdoagi-webtests-playwright",
   "version": "1.0.0",
   "description": "Projeto de testes UI BlogAgi",
-  "homepage": "https://github.com/thiagosouza10/blogdoagi-webtests-playwright#readme",
-  "bugs": {
-    "url": "https://github.com/thiagosouza10/blogdoagi-webtests-playwright/issues"
-  },
+  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thiagosouza10/blogdoagi-webtests-playwright.git"
   },
+  
   "license": "MIT",
   "author": "Thiago de Souza",
   "type": "commonjs",
   "main": "index.js",
+
   "scripts": {
-    "allure-clean-results": "rm -rf ./allure-results",
-    "tests": "npm run allure-clean-results && npx playwright test",
-    "allure": "allure generate ./allure-results -o ./allure-report --clean && npx allure open ./allure-report"
+    "tests": "npx playwright test",
+    "report": "npx playwright show-report"
   },
+
   "devDependencies": {
     "@playwright/test": "^1.59.1",
-    "@types/node": "^25.6.0",
-    "allure-playwright": "^3.7.1"
+    "@types/node": "^25.6.0"
   }
 }
