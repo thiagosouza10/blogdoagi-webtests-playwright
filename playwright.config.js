@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
-  workers: 1,
+  workers: 5,
 
   reporter: [
     ['line'],
@@ -13,7 +13,6 @@ export default defineConfig({
 
   use: {
     baseURL: 'https://blog.agibank.com.br',
-    trace: 'on-first-retry',
     headless: true,
     screenshot: 'only-on-failure',
     video: 'off',

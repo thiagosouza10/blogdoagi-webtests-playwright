@@ -1,61 +1,63 @@
 import { test, expect } from '@playwright/test';
+import { PesquisaArtigosPage } from '../pages/pesquisa-artigos-page';
+import { ArtigosPage } from '../pages/artigos-page';
+import { HomePage } from '../pages/home-page';
 
 
 test.describe('Pesquisa de artigos no Blog do Agibank', () => {
+  let homePage;
+  let pesquisaArtigosPage;
+  let artigosPage;
+  
+  test.beforeEach(async ({ page }) => {
+    homePage = new HomePage(page);
+    pesquisaArtigosPage = new PesquisaArtigosPage(page);
+    artigosPage = new ArtigosPage(page);
+    await homePage.acessarBlogAgibanck();
+  });
 
   test('Deve pesquisar artigos com o termo Pix', async ({ page }) => {
-    await page.goto('/');
+    await homePage.acessarPesquisaArtigos();
+    await pesquisaArtigosPage.pesquisarArtigos('Pix');
 
-    await page.getByRole('button', { name: 'Search icon link' }).click();
-    await page.getByRole('textbox', { name: 'Digite sua busca' }).fill('Pix');
-    await page.getByRole('button', { name: 'Pesquisar' }).click();
-
-    await expect(page.locator('article[itemscope="itemscope"]').first()).toBeVisible();
-    await expect(page).toHaveURL(/s=Pix/i);
-    await expect(page.locator('h1')).toContainText('Resultados encontrados para: Pix');
+    await artigosPage.validaPaginaArtigos({
+      url: /pix/i,
+      titulo: 'Resultados encontrados para: Pix',
+      texto: 'Pix automático: o que é e como utilizar'
+    });
   });
 
   test('Deve acessar um artigo especifico a partir da busca pelo termo Pix', async ({ page }) => {
-    await page.goto('/');
+    const textoArtigo = 'Pix';
+    await homePage.acessarPesquisaArtigos();
+    await pesquisaArtigosPage.filtrarArtigos(textoArtigo);
+    await pesquisaArtigosPage.validarListaArtigos(textoArtigo);
+    await pesquisaArtigosPage.acessarPrimeiroArtigo();
 
-    await page.getByRole('button', { name: 'Search icon link' }).click();
-    await page.getByRole('textbox', { name: 'Digite sua busca' }).fill('Pix');
-
-    await expect(page.locator('div[role="listbox"]')).toBeVisible();
-    const listaArtigos = page.locator('.ast-search-item span');
-    await expect(listaArtigos).not.toHaveCount(0);
-    const textoArtigos = await listaArtigos.allTextContents();
-    for (const textoArtigo of textoArtigos) {
-      expect(textoArtigo.toLowerCase()).toContain('pix');
-    }
-    let nomeArtigo = await listaArtigos.first().textContent();
-    await page.getByRole('option', { name: nomeArtigo }).click();
-
-    await expect(page).toHaveURL(/pix/i);
-    await expect(page.locator('h1')).toContainText('Pix');
+    await artigosPage.validaPaginaArtigos({
+      url: /pix/i,
+      titulo: textoArtigo,
+      texto: textoArtigo
+    });
   });
 
   test('Deve fechar a página de pesquisa retornando para a página inicial', async ({ page }) => {
-    await page.goto('/');
-
-    await page.getByRole('button', { name: 'Search icon link' }).click();
-    await expect(page.getByRole('textbox', { name: 'Digite sua busca' })).toBeVisible();
-    await page.locator('.ast-icon.icon-close').click();
+    await homePage.acessarPesquisaArtigos();
+    await pesquisaArtigosPage.filtrarArtigos('Pix');
+    await pesquisaArtigosPage.btnFecharPesquisa.click();
 
     await expect(page).toHaveURL('/');
-    await expect(page.getByLabel('Primary Site Navigation').getByRole('link', { name: 'O Agibank' })).toBeVisible();
+    await expect(homePage.menuAgibank).toBeVisible();
   });
 
   test('Não deve exibir resultados para termo de busca inválido', async ({ page }) => {
-    await page.goto('/');
+    await homePage.acessarPesquisaArtigos();
+    await pesquisaArtigosPage.pesquisarArtigos('Quality Assurance');
 
-    await page.getByRole('button', { name: 'Search icon link' }).click();
-    await page.getByRole('textbox', { name: 'Digite sua busca' }).fill('Quality Assurance');
-    await expect(page.locator('div[role="listbox"]').getByText('No results found')).toBeVisible();
-    await page.getByRole('button', { name: 'Pesquisar' }).click();
-
-    await expect(page).toHaveURL(/\?s=Quality\+Assurance/i);
-    await expect(page.locator('h1')).toContainText('Resultados encontrados para: Quality Assurance');
-    await expect(page.locator('#main')).toContainText('Lamentamos, mas nada foi encontrado para sua pesquisa, tente novamente com outras palavras.');
+    await artigosPage.validaPaginaArtigos({
+      url: /Quality\+Assurance/i,
+      titulo: 'Resultados encontrados para: Quality Assurance',
+      texto: 'Lamentamos, mas nada foi encontrado para sua pesquisa, tente novamente com outras palavras.'
+    });
   });
 });  
