@@ -45,6 +45,9 @@ cd blogdoagi-webtests-playwright
 # Instalar dependências
 npm install
 
+# Intalação dos navegadores 
+npx playwright install
+
 # Executar testes
 npm run tests
 
